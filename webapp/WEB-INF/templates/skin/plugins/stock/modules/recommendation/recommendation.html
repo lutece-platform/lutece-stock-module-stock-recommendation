@@ -1,0 +1,28 @@
+<div class="row">
+    <h1>#i18n{module.stock.recommendation.title}</h1>
+    
+    <@messages errors=errors />
+    <div class="row">
+      
+    <#if products_list??>
+        <#list products_list as product>
+            <div class="col-xs-6 col-sm-4">
+                <a href="http://alaffiche.apps.paris.mdp/billetterie/jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${product.id}">
+                    <h3>${product.name}</h3>
+                </a>
+                ${product.description!''}
+                
+                <p>
+                #i18n{module.stock.recommendation.labelPrice} : ${product.price!''}
+                </p>
+                <p>
+                #i18n{module.stock.recommendation.labelCategory} : ${product.category.name!''}
+                </p>
+                <p>
+                #i18n{module.stock.recommendation.labelProvider} : ${product.provider.name!''}
+                </p>
+            </div>
+        </#list>
+    </#if>
+</div>
+  
