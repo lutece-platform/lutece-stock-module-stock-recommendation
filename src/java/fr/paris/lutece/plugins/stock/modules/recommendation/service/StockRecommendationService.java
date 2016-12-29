@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.stock.modules.recommendation.service;
 
 import fr.paris.lutece.plugins.stock.business.product.Product;
 import fr.paris.lutece.plugins.stock.business.product.ProductDAO;
+import fr.paris.lutece.plugins.stock.business.product.ProductFilter;
 import fr.paris.lutece.plugins.stock.modules.recommendation.business.StockPurchaseDAO;
 import fr.paris.lutece.plugins.stock.modules.recommendation.business.UserItem;
 import fr.paris.lutece.portal.service.plugin.Plugin;
@@ -84,6 +85,7 @@ public class StockRecommendationService
     private static UserBasedRecommender _recommender;
     private static ProductDAO _daoProduct;
     private static int _nCount = AppPropertiesService.getPropertyInt( PROPERTY_COUNT, DEFAULT_COUNT );
+    private static List<Integer> _listAvailableProducts;
 
     /** private constructor */
     private StockRecommendationService( )
@@ -107,12 +109,15 @@ public class StockRecommendationService
             {
                 _migrator = new FileIDMigrator( idMigratorFile );
 
+                
+                _daoProduct = SpringContextService.getBean( BEAN_PRODUCT_DAO );
+                _listAvailableProducts = buildAvailableProductsList();
+                AppLogService.info( "stock-recommendation : " + _listAvailableProducts.size() + " products found that can be ordered." );
                 AppLogService.info( "stock-recommendation : creating data file with current purchases." );
                 _writer = new FilePurchaseDataWriter( dataFile );
                 extractPurchases( );
                 AppLogService.info( "stock-recommendation : initialize the recommender with data." );
                 _recommender = createRecommender( dataFile );
-                _daoProduct = SpringContextService.getBean( BEAN_PRODUCT_DAO );
 
             }
             catch( FileNotFoundException ex )
@@ -178,9 +183,13 @@ public class StockRecommendationService
         List<Product> list = new ArrayList<>( );
         for ( RecommendedItem item : getRecommendedItems( strUserName ) )
         {
-            Product product = (Product) _daoProduct.findById( (int) item.getItemID( ) );
-            list.add( product );
-            AppLogService.info( "Product recommended : " + product.getId( ) + " - " + product.getName( ) );
+            int nItemId = (int) item.getItemID( );
+            if( _listAvailableProducts.contains( nItemId ))
+            {
+                Product product = (Product) _daoProduct.findById( nItemId );
+                list.add( product );
+                AppLogService.info( "Product recommended : (score " + item.getValue() + ") #" + product.getId( ) + " - " + product.getName( ) );
+            }
         }
         return list;
     }
@@ -204,5 +213,18 @@ public class StockRecommendationService
         UserNeighborhood neighborhood = new ThresholdUserNeighborhood( threshold, similarity, model );
         return new GenericBooleanPrefUserBasedRecommender( model, neighborhood, similarity );
 
+    }
+    
+    private static List<Integer> buildAvailableProductsList()
+    {
+        List<Integer> listAvailableProducts = new ArrayList<>();
+        ProductFilter filter = new ProductFilter();
+        filter.setAlaffiche( Boolean.TRUE );
+        List<Product> list = _daoProduct.findByFilter( filter );
+        for( Product product : list )
+        {
+            listAvailableProducts.add( product.getId() );
+        }
+        return listAvailableProducts;
     }
 }
