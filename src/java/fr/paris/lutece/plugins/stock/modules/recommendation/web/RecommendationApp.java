@@ -44,6 +44,7 @@ import fr.paris.lutece.portal.web.xpages.XPage;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
+import fr.paris.lutece.portal.web.l10n.LocaleService;
 import java.util.List;
 import java.util.Map;
 
@@ -63,6 +64,7 @@ public class RecommendationApp extends MVCApplication
     private static final String PRODUCT_LINK_URL = AppPropertiesService.getProperty( PROPERTY_LINK_URL );
     private static final String PROPERTY_TEST_USER = "stock-recommendation.testuser";
     private static final String VIEW_HOME = "home";
+    private static final String PARAMETER_USERNAME = "username";
 
     /**
      * Returns the content of the page recommendation.
@@ -76,8 +78,18 @@ public class RecommendationApp extends MVCApplication
     @View( value = VIEW_HOME, defaultView = true )
     public XPage viewHome( HttpServletRequest request ) throws UserNotSignedException
     {
+        
+        //////////// Test features - begin
         String strUserName = AppPropertiesService.getProperty( PROPERTY_TEST_USER );
+        
+        String strRequestUser = request.getParameter( PARAMETER_USERNAME );
+        if( strRequestUser != null )
+        {
+            strUserName = strRequestUser;
+        }
+        //////////// Test features - end
 
+        
         if ( strUserName == null )
         {
             LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
@@ -102,6 +114,6 @@ public class RecommendationApp extends MVCApplication
         Map<String, Object> model = getModel( );
         model.put( MARK_PRODUCTS_LIST, listProducts );
         model.put( MARK_PRODUCT_LINK_URL, PRODUCT_LINK_URL );
-        return getXPage( TEMPLATE_XPAGE, request.getLocale( ), model );
+        return getXPage( TEMPLATE_XPAGE, LocaleService.getDefault() , model );
     }
 }

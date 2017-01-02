@@ -37,6 +37,7 @@ package fr.paris.lutece.plugins.stock.modules.recommendation.service;
 import fr.paris.lutece.plugins.stock.business.product.Product;
 import fr.paris.lutece.plugins.stock.business.product.ProductDAO;
 import fr.paris.lutece.plugins.stock.business.product.ProductFilter;
+import fr.paris.lutece.plugins.stock.modules.recommendation.business.AvailableProductsDAO;
 import fr.paris.lutece.plugins.stock.modules.recommendation.business.StockPurchaseDAO;
 import fr.paris.lutece.plugins.stock.modules.recommendation.business.UserItem;
 import fr.paris.lutece.portal.service.plugin.Plugin;
@@ -48,7 +49,9 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.apache.mahout.cf.taste.common.NoSuchUserException;
 import org.apache.mahout.cf.taste.common.TasteException;
@@ -217,14 +220,10 @@ public class StockRecommendationService
     
     private static List<Integer> buildAvailableProductsList()
     {
-        List<Integer> listAvailableProducts = new ArrayList<>();
-        ProductFilter filter = new ProductFilter();
-        filter.setAlaffiche( Boolean.TRUE );
-        List<Product> list = _daoProduct.findByFilter( filter );
-        for( Product product : list )
-        {
-            listAvailableProducts.add( product.getId() );
-        }
+        AvailableProductsDAO  dao = new AvailableProductsDAO();
+        
+        Timestamp time = new Timestamp( (new Date()).getTime() );
+        List<Integer> listAvailableProducts = dao.selectUserItemsList( time , _plugin );
         return listAvailableProducts;
     }
 }

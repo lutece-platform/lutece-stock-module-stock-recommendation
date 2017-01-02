@@ -48,7 +48,7 @@ public class StockPurchaseDAO
 
     public List<UserItem> selectUserItemsList( Plugin plugin )
     {
-        List<UserItem> friendlyUrlList = new ArrayList<UserItem>( );
+        List<UserItem> list = new ArrayList<UserItem>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
         daoUtil.executeQuery( );
 
@@ -59,12 +59,12 @@ public class StockPurchaseDAO
             userItem.setUserName( daoUtil.getString( 1 ) );
             userItem.setItemId( daoUtil.getInt( 2 ) );
 
-            friendlyUrlList.add( userItem );
+            list.add( userItem );
         }
 
         daoUtil.free( );
 
-        return friendlyUrlList;
+        return list;
     }
 
 }
