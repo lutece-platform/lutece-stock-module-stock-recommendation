@@ -27,5 +27,15 @@
             <application-class>fr.paris.lutece.plugins.stock.modules.recommendation.web.RecommendationApp</application-class>
         </application>
     </applications>
+    
+    <daemons>
+        <daemon>
+            <daemon-id>recommendationsBuilder</daemon-id>
+            <daemon-name>module.stock.recommendation.daemon.recommendationsBuilder.name</daemon-name>
+            <daemon-description>module.stock.recommendation.daemon.recommendationsBuilder.description</daemon-description>
+            <daemon-class>fr.paris.lutece.plugins.stock.modules.recommendation.service.BuildRecommendationsDaemon</daemon-class>
+        </daemon>
+    </daemons>
+
 	
 </plug-in>

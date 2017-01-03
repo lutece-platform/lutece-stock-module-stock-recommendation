@@ -33,7 +33,7 @@
  */
 package fr.paris.lutece.plugins.stock.modules.recommendation.web;
 
-import fr.paris.lutece.plugins.stock.business.product.Product;
+import fr.paris.lutece.plugins.stock.modules.recommendation.business.RecommendedProduct;
 import fr.paris.lutece.plugins.stock.modules.recommendation.service.StockRecommendationService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
@@ -78,18 +78,17 @@ public class RecommendationApp extends MVCApplication
     @View( value = VIEW_HOME, defaultView = true )
     public XPage viewHome( HttpServletRequest request ) throws UserNotSignedException
     {
-        
-        //////////// Test features - begin
+
+        // ////////// Test features - begin
         String strUserName = AppPropertiesService.getProperty( PROPERTY_TEST_USER );
-        
+
         String strRequestUser = request.getParameter( PARAMETER_USERNAME );
-        if( strRequestUser != null )
+        if ( strRequestUser != null )
         {
             strUserName = strRequestUser;
         }
-        //////////// Test features - end
+        // ////////// Test features - end
 
-        
         if ( strUserName == null )
         {
             LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
@@ -100,7 +99,7 @@ public class RecommendationApp extends MVCApplication
             strUserName = user.getName( );
         }
 
-        List<Product> listProducts = null;
+        List<RecommendedProduct> listProducts = null;
         try
         {
             listProducts = StockRecommendationService.instance( ).getRecommendedProducts( strUserName );
@@ -114,6 +113,6 @@ public class RecommendationApp extends MVCApplication
         Map<String, Object> model = getModel( );
         model.put( MARK_PRODUCTS_LIST, listProducts );
         model.put( MARK_PRODUCT_LINK_URL, PRODUCT_LINK_URL );
-        return getXPage( TEMPLATE_XPAGE, LocaleService.getDefault() , model );
+        return getXPage( TEMPLATE_XPAGE, LocaleService.getDefault( ), model );
     }
 }

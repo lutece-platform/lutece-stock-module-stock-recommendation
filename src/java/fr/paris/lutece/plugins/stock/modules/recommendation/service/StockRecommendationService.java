@@ -34,15 +34,14 @@
 
 package fr.paris.lutece.plugins.stock.modules.recommendation.service;
 
-import fr.paris.lutece.plugins.stock.business.product.Product;
-import fr.paris.lutece.plugins.stock.business.product.ProductDAO;
-import fr.paris.lutece.plugins.stock.business.product.ProductFilter;
 import fr.paris.lutece.plugins.stock.modules.recommendation.business.AvailableProductsDAO;
+import fr.paris.lutece.plugins.stock.modules.recommendation.business.Recommendation;
+import fr.paris.lutece.plugins.stock.modules.recommendation.business.RecommendationDAO;
+import fr.paris.lutece.plugins.stock.modules.recommendation.business.RecommendedProduct;
 import fr.paris.lutece.plugins.stock.modules.recommendation.business.StockPurchaseDAO;
 import fr.paris.lutece.plugins.stock.modules.recommendation.business.UserItem;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -78,15 +77,15 @@ public class StockRecommendationService
     private static final String PROPERTY_COUNT = "stock-recommendation.recommender.count";
     private static final String DEFAULT_THRESHOLD = "0.1";
     private static final int DEFAULT_COUNT = 6;
-    private static final String BEAN_PRODUCT_DAO = "stock.productDAO";
 
     private static Plugin _plugin = PluginService.getPlugin( PLUGIN_NAME );
-    private static StockPurchaseDAO _dao = new StockPurchaseDAO( );
+    private static StockPurchaseDAO _daoPurchase = new StockPurchaseDAO( );
+    private static RecommendationDAO _daoRecommendation = new RecommendationDAO( );
+    private static AvailableProductsDAO _daoProducts = new AvailableProductsDAO( );
     private static FileIDMigrator _migrator;
     private static StockRecommendationService _singleton;
     private static PurchaseDataWriter _writer;
     private static UserBasedRecommender _recommender;
-    private static ProductDAO _daoProduct;
     private static int _nCount = AppPropertiesService.getPropertyInt( PROPERTY_COUNT, DEFAULT_COUNT );
     private static List<Integer> _listAvailableProducts;
 
@@ -97,6 +96,7 @@ public class StockRecommendationService
 
     /**
      * Return the unique instance
+     * 
      * @return The unique instance
      */
     public static synchronized StockRecommendationService instance( )
@@ -112,16 +112,13 @@ public class StockRecommendationService
             {
                 _migrator = new FileIDMigrator( idMigratorFile );
 
-                
-                _daoProduct = SpringContextService.getBean( BEAN_PRODUCT_DAO );
-                _listAvailableProducts = buildAvailableProductsList();
-                AppLogService.info( "stock-recommendation : " + _listAvailableProducts.size() + " products found that can be ordered." );
+                _listAvailableProducts = buildAvailableProductsList( );
+                AppLogService.info( "stock-recommendation : " + _listAvailableProducts.size( ) + " products found that can be ordered." );
                 AppLogService.info( "stock-recommendation : creating data file with current purchases." );
                 _writer = new FilePurchaseDataWriter( dataFile );
                 extractPurchases( );
                 AppLogService.info( "stock-recommendation : initialize the recommender with data." );
                 _recommender = createRecommender( dataFile );
-
             }
             catch( FileNotFoundException ex )
             {
@@ -142,7 +139,7 @@ public class StockRecommendationService
     public static void extractPurchases( )
     {
         _writer.reset( );
-        List<UserItem> list = _dao.selectUserItemsList( _plugin );
+        List<UserItem> list = _daoPurchase.selectUserItemsList( _plugin );
         for ( UserItem ui : list )
         {
             long lUserID = _migrator.toLongID( ui.getUserName( ) );
@@ -181,20 +178,64 @@ public class StockRecommendationService
      * @throws TasteException
      *             Other problem
      */
-    public List<Product> getRecommendedProducts( String strUserName ) throws NoSuchUserException, TasteException
+    public List<RecommendedProduct> getRecommendedProducts( String strUserName ) throws NoSuchUserException, TasteException
     {
-        List<Product> list = new ArrayList<>( );
+        List<RecommendedProduct> list = loadFromDatabase( strUserName );
+        
+        if( list != null )
+        {
+            return list;
+        }
+        
+        list = new ArrayList<>( );
+        
         for ( RecommendedItem item : getRecommendedItems( strUserName ) )
         {
             int nItemId = (int) item.getItemID( );
-            if( _listAvailableProducts.contains( nItemId ))
+            if ( _listAvailableProducts.contains( nItemId ) )
             {
-                Product product = (Product) _daoProduct.findById( nItemId );
-                list.add( product );
-                AppLogService.info( "Product recommended : (score " + item.getValue() + ") #" + product.getId( ) + " - " + product.getName( ) );
+                RecommendedProduct rp = new RecommendedProduct();
+                rp.setProductId( nItemId );
+                rp.setScore( item.getValue() );
+                _daoProducts.getProductInfos( rp, _plugin );
+                list.add( rp );
+                Recommendation recommendation = new Recommendation();
+                recommendation.setUsername( strUserName );
+                recommendation.setIdProduct( nItemId );
+                recommendation.setScore(  item.getValue() );
+                _daoRecommendation.insert( recommendation, _plugin );
+
+                AppLogService.info( "Product recommended for user " + strUserName + " : " + rp ); 
             }
         }
         return list;
+    }
+    
+    /**
+     * Load recommended products from the database for a given user 
+     * @param strUsername The user
+     * @return The list
+     */
+    private List<RecommendedProduct> loadFromDatabase( String strUsername )
+    {
+        List<Recommendation> listRecommandations = _daoRecommendation.selectRecommendationsByUser( strUsername, _plugin );
+        
+        if( listRecommandations == null || listRecommandations.isEmpty() )
+        {
+            return null;
+        }
+        
+        List<RecommendedProduct> list = new ArrayList<>();
+        for( Recommendation recommendation  : listRecommandations )
+        {
+            RecommendedProduct rp = new RecommendedProduct();
+            rp.setProductId( recommendation.getIdProduct() );
+            rp.setScore( recommendation.getScore() );
+            _daoProducts.getProductInfos( rp, _plugin );
+            list.add( rp );
+        }
+        return list;
+        
     }
 
     /**
@@ -217,13 +258,69 @@ public class StockRecommendationService
         return new GenericBooleanPrefUserBasedRecommender( model, neighborhood, similarity );
 
     }
-    
-    private static List<Integer> buildAvailableProductsList()
+
+    /**
+     * Build the available productlist
+     * @return The list of IDs
+     */
+    private static List<Integer> buildAvailableProductsList( )
     {
-        AvailableProductsDAO  dao = new AvailableProductsDAO();
         
-        Timestamp time = new Timestamp( (new Date()).getTime() );
-        List<Integer> listAvailableProducts = dao.selectUserItemsList( time , _plugin );
+
+        Timestamp time = new Timestamp( ( new Date( ) ).getTime( ) );
+        List<Integer> listAvailableProducts = _daoProducts.selectUserItemsList( time, _plugin );
         return listAvailableProducts;
+    }
+
+    /**
+     * build recommendations (used by the daemon)
+     * @param sbLogs The daemons logs
+     */
+    public void buildRecommendations( StringBuilder sbLogs )
+    {
+        List<String> listUsers = _daoPurchase.selectUsersList( _plugin );
+        int nUsersCount = listUsers.size();
+        int nRecommendationCount = 0;
+        AppLogService.info( "Starting building recommendations for " + nUsersCount + " users ...");
+        for ( String strUsername : listUsers )
+        {
+            nRecommendationCount += writeUserRecommendations( strUsername );
+        }
+        
+        double ratio = (double) nRecommendationCount / (double) nUsersCount;
+        sbLogs.append( "Recommendation builder\n ");
+        sbLogs.append( "number of users : " ).append(nUsersCount).append("\n");
+        sbLogs.append( "number of recommendations : " ).append(nRecommendationCount).append("\n");
+        sbLogs.append( "ratio per user : " ).append( ratio ).append("\n");
+    }
+    
+    /**
+     * Write recommendations into the database for a given user
+     * @param strUsername The Username
+     * @return The number of recommendations found
+     */
+    private int writeUserRecommendations( String strUsername )
+    {
+        int nCount = 0;
+        _daoRecommendation.deleteByUser( strUsername, _plugin );
+        try
+        {
+            List<RecommendedProduct> listProduct = getRecommendedProducts( strUsername );
+            for ( RecommendedProduct product : listProduct )
+            {
+                Recommendation recommendation = new Recommendation( );
+                recommendation.setUsername( strUsername );
+                recommendation.setIdProduct( product.getProductId() );
+                recommendation.setScore( product.getScore() );
+                _daoRecommendation.insert( recommendation, _plugin );
+                nCount++;
+            }
+        }
+        catch( TasteException ex )
+        {
+            AppLogService.error( "RecommendationService ", ex );
+        }
+        return nCount;
+        
     }
 }

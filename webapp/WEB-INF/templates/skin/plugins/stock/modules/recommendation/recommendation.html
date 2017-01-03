@@ -7,27 +7,12 @@
     <#if products_list??>
         <#list products_list as product>
             <div class="col-xs-6 col-sm-4">
-                <a href="http://alaffiche.apps.paris.mdp/billetterie/jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${product.id}">
-                    <img src="http://alaffiche.apps.paris.mdp/billetterie/servlet/plugins/poster?tb=false&amp;product_id=${product.id}" alt="${product.category.name!''}" width="200">
+                <a href="http://alaffiche.apps.paris.mdp/billetterie/jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${product.productId}">
+                    <img src="http://alaffiche.apps.paris.mdp/billetterie/servlet/plugins/poster?tb=false&amp;product_id=${product.productId}" alt="${product.productName}" width="200">
                     <br>
-                    <strong>${product.name}</strong>
+                    <strong>${product.productName}</strong>
                 </a>
                 <br>
-                <!-- ${product.description!''} -->
-                
-                <p>
-                    <!-- #i18n{module.stock.recommendation.labelCategory} : --> <em>${product.category.name!''}</em>
-                </p>
-                
-                <!--
-                <p>
-                #i18n{module.stock.recommendation.labelPrice} : ${product.price!''}
-                </p>
-                <p>
-                #i18n{module.stock.recommendation.labelProvider} : ${product.provider.name!''}
-                </p>
-                -->
-                
             </div>
         </#list>
     </#if>

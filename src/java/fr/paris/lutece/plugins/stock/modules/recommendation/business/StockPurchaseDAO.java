@@ -45,7 +45,15 @@ import java.util.List;
 public class StockPurchaseDAO
 {
     private static final String SQL_QUERY_SELECTALL = "SELECT a.username , b.product_id FROM stock_purchase a, stock_offer b WHERE a.offer_id = b.id_offer";
+    private static final String SQL_QUERY_SELECT_USERS = "SELECT DISTINCT username FROM stock_purchase";
 
+    /**
+     * Read all purchase data
+     * 
+     * @param plugin
+     *            The plugin
+     * @return The list of purchase data
+     */
     public List<UserItem> selectUserItemsList( Plugin plugin )
     {
         List<UserItem> list = new ArrayList<UserItem>( );
@@ -67,4 +75,26 @@ public class StockPurchaseDAO
         return list;
     }
 
+    /**
+     * Select all users that purchase an item
+     * 
+     * @param plugin
+     *            The plugin
+     * @return The list of users
+     */
+    public List<String> selectUsersList( Plugin plugin )
+    {
+        List<String> list = new ArrayList<String>( );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_USERS, plugin );
+        daoUtil.executeQuery( );
+
+        while ( daoUtil.next( ) )
+        {
+            list.add( daoUtil.getString( 1 ) );
+        }
+
+        daoUtil.free( );
+
+        return list;
+    }
 }
