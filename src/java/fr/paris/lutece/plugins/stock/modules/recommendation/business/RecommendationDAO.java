@@ -93,7 +93,7 @@ public final class RecommendationDAO
     /**
      * Load the data of all the recommendations and returns them as a List
      * 
-     * @param strUsername
+     * @param strUsername The username
      * @param plugin
      *            The plugin
      * @return The List which contains the data of all the recommendations

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2017, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,7 +51,13 @@ public class AvailableProductsDAO
 
     private static final String SQL_QUERY_PRODUCT = "SELECT name FROM stock_product WHERE id_product = ?";
 
-    public List<Integer> selectUserItemsList( Timestamp time, Plugin plugin )
+    /**
+     * Get the list of available products IDs at a given time
+     * @param time The time
+     * @param plugin The plugin
+     * @return The list
+     */
+    public List<Integer> selectAvailableProductsIdList( Timestamp time, Plugin plugin )
     {
         List<Integer> list = new ArrayList<Integer>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
@@ -69,15 +75,20 @@ public class AvailableProductsDAO
         return list;
     }
 
-    public void getProductInfos( RecommendedProduct rp, Plugin plugin )
+    /**
+     * Gets product infos
+     * @param product The product
+     * @param plugin The plugin
+     */
+    public void getProductInfos( RecommendedProduct product, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_PRODUCT, plugin );
-        daoUtil.setInt( 1, rp.getProductId( ) );
+        daoUtil.setInt( 1, product.getProductId( ) );
         daoUtil.executeQuery( );
 
         if ( daoUtil.next( ) )
         {
-            rp.setProductName( daoUtil.getString( 1 ) );
+            product.setProductName( daoUtil.getString( 1 ) );
         }
 
         daoUtil.free( );

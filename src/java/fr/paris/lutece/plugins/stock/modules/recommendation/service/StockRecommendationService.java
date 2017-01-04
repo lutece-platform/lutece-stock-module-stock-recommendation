@@ -68,7 +68,7 @@ import org.apache.mahout.cf.taste.similarity.UserSimilarity;
 /**
  * StockRecommendationService
  */
-public class StockRecommendationService
+public final class StockRecommendationService
 {
     private static final String PLUGIN_NAME = "stock-recommendation";
     private static final String PROPERTY_ID_MIGRATOR_FILE_PATH = "stock-recommendation.idMigratorFilePath";
@@ -198,6 +198,13 @@ public class StockRecommendationService
 
     }
 
+    /**
+     * Get the recommended products list
+     * @param strUserName The username
+     * @return The list
+     * @throws NoSuchUserException if the user is not found
+     * @throws TasteException if an error occurs
+     */
     private List<RecommendedProduct> getRecommendedProductsList( String strUserName ) throws NoSuchUserException, TasteException
     {
         List<RecommendedProduct> list = new ArrayList<>( );
@@ -207,12 +214,12 @@ public class StockRecommendationService
             int nItemId = (int) item.getItemID( );
             if ( _listAvailableProducts.contains( nItemId ) )
             {
-                RecommendedProduct rp = new RecommendedProduct( );
-                rp.setProductId( nItemId );
-                rp.setScore( item.getValue( ) );
-                _daoProducts.getProductInfos( rp, _plugin );
-                list.add( rp );
-                AppLogService.info( "Product recommended for user " + strUserName + " : " + rp );
+                RecommendedProduct product = new RecommendedProduct( );
+                product.setProductId( nItemId );
+                product.setScore( item.getValue( ) );
+                _daoProducts.getProductInfos( product, _plugin );
+                list.add( product );
+                AppLogService.info( "Product recommended for user " + strUserName + " : " + product );
             }
         }
         return list;
@@ -237,11 +244,11 @@ public class StockRecommendationService
         List<RecommendedProduct> list = new ArrayList<>( );
         for ( Recommendation recommendation : listRecommandations )
         {
-            RecommendedProduct rp = new RecommendedProduct( );
-            rp.setProductId( recommendation.getIdProduct( ) );
-            rp.setScore( recommendation.getScore( ) );
-            _daoProducts.getProductInfos( rp, _plugin );
-            list.add( rp );
+            RecommendedProduct product = new RecommendedProduct( );
+            product.setProductId( recommendation.getIdProduct( ) );
+            product.setScore( recommendation.getScore( ) );
+            _daoProducts.getProductInfos( product, _plugin );
+            list.add( product );
         }
         return list;
 
@@ -276,7 +283,7 @@ public class StockRecommendationService
     private static List<Integer> buildAvailableProductsList( )
     {
         Timestamp time = new Timestamp( ( new Date( ) ).getTime( ) );
-        List<Integer> listAvailableProducts = _daoProducts.selectUserItemsList( time, _plugin );
+        List<Integer> listAvailableProducts = _daoProducts.selectAvailableProductsIdList( time, _plugin );
         return listAvailableProducts;
     }
 
@@ -307,10 +314,10 @@ public class StockRecommendationService
         }
 
         double ratio = (double) nRecommendationCount / (double) nUsersCount;
-        sbLogs.append( "Recommendation builder\n " );
-        sbLogs.append( "number of users : " ).append( nUsersCount ).append( "\n" );
-        sbLogs.append( "number of recommendations : " ).append( nRecommendationCount ).append( "\n" );
-        sbLogs.append( "ratio per user : " ).append( ratio ).append( "\n" );
+        sbLogs.append( "Recommendation builder\n " )
+                .append( "number of users : " ).append( nUsersCount ).append( '\n' )
+                .append( "number of recommendations : " ).append( nRecommendationCount ).append( '\n' )
+                .append( "ratio per user : " ).append( ratio ).append( '\n' );
     }
 
     /**
@@ -318,6 +325,8 @@ public class StockRecommendationService
      * 
      * @param strUsername
      *            The Username
+     * @param listProduct 
+     *            The product list
      * @return The number of recommendations found
      */
     private int writeUserRecommendations( String strUsername, List<RecommendedProduct> listProduct )
@@ -330,14 +339,7 @@ public class StockRecommendationService
             recommendation.setUsername( strUsername );
             recommendation.setIdProduct( product.getProductId( ) );
             recommendation.setScore( product.getScore( ) );
-            try
-            {
-                _daoRecommendation.insert( recommendation, _plugin );
-            }
-            catch( Exception e )
-            {
-                AppLogService.error( "Error writing recommendation : " + recommendation + " ERROR:" + e.getMessage( ), e );
-            }
+            _daoRecommendation.insert( recommendation, _plugin );
             nCount++;
         }
 

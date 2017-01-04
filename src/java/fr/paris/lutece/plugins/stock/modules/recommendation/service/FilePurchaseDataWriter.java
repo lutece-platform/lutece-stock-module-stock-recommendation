@@ -49,6 +49,10 @@ public class FilePurchaseDataWriter implements PurchaseDataWriter
     private Writer _output;
     private File _file;
 
+    /**
+     * Constructor
+     * @param file The data file 
+     */
     public FilePurchaseDataWriter( File file )
     {
         _file = file;
