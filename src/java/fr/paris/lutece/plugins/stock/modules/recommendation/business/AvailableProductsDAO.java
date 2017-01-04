@@ -48,38 +48,38 @@ public class AvailableProductsDAO
     private static final String SQL_QUERY_SELECTALL = "SELECT a.id_product FROM stock_product a, stock_product_attribute_date b, stock_product_attribute_date c "
             + " WHERE a.id_product = b.owner_id AND b.attribute_key = 'start' AND a.id_product = c.owner_id "
             + " AND c.attribute_key = 'end' AND b.attribute_value < ? AND c.attribute_value > ?";
-    
+
     private static final String SQL_QUERY_PRODUCT = "SELECT name FROM stock_product WHERE id_product = ?";
 
     public List<Integer> selectUserItemsList( Timestamp time, Plugin plugin )
     {
-        List<Integer> list = new ArrayList<Integer>();
+        List<Integer> list = new ArrayList<Integer>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
         daoUtil.setTimestamp( 1, time );
         daoUtil.setTimestamp( 2, time );
-        daoUtil.executeQuery();
+        daoUtil.executeQuery( );
 
-        while( daoUtil.next() )
+        while ( daoUtil.next( ) )
         {
             list.add( daoUtil.getInt( 1 ) );
         }
 
-        daoUtil.free();
+        daoUtil.free( );
 
         return list;
     }
 
-    public void getProductInfos( RecommendedProduct rp , Plugin plugin )
+    public void getProductInfos( RecommendedProduct rp, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_PRODUCT, plugin );
-        daoUtil.setInt( 1, rp.getProductId() );
-        daoUtil.executeQuery();
+        daoUtil.setInt( 1, rp.getProductId( ) );
+        daoUtil.executeQuery( );
 
-        if( daoUtil.next() )
+        if ( daoUtil.next( ) )
         {
             rp.setProductName( daoUtil.getString( 1 ) );
         }
 
-        daoUtil.free();
+        daoUtil.free( );
     }
 }

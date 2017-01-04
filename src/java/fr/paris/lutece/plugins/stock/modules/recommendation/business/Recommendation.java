@@ -105,4 +105,11 @@ public class Recommendation
     {
         _Score = Score;
     }
+
+    @Override
+    public String toString( )
+    {
+        return "USER:" + _strUsername + "  ITEM:" + _nIdProduct + "  SCORE:" + _Score;
+    }
+
 }

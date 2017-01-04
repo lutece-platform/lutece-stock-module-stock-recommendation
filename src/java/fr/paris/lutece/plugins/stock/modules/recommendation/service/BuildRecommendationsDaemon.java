@@ -38,18 +38,17 @@ import fr.paris.lutece.portal.service.daemon.Daemon;
 /**
  * BuildRecommendationsDaemon
  */
-public class BuildRecommendationsDaemon  extends Daemon
+public class BuildRecommendationsDaemon extends Daemon
 {
     @Override
     public void run( )
     {
-        long lTime1 = System.currentTimeMillis();
-        
-        StringBuilder sbLogs = new StringBuilder();
-        StockRecommendationService.instance().buildRecommendations( sbLogs );
-        long lTime2 = System.currentTimeMillis();
-        sbLogs.append( "\nDuration = " ).append( ( lTime2 - lTime1 )/1000L ).append(" seconds");
-        setLastRunLogs( sbLogs.toString() );
+        long lTime1 = System.currentTimeMillis( );
+
+        StringBuilder sbLogs = new StringBuilder( );
+        StockRecommendationService.instance( ).buildRecommendations( sbLogs );
+        long lTime2 = System.currentTimeMillis( );
+        sbLogs.append( "\nDuration = " ).append( ( lTime2 - lTime1 ) / 1000L ).append( " seconds" );
+        setLastRunLogs( sbLogs.toString( ) );
     }
 }
-

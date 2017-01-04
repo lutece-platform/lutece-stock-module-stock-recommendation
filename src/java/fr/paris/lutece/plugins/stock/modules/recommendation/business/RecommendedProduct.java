@@ -32,7 +32,6 @@
  * License 1.0
  */
 
-
 package fr.paris.lutece.plugins.stock.modules.recommendation.business;
 
 /**
@@ -41,70 +40,78 @@ package fr.paris.lutece.plugins.stock.modules.recommendation.business;
 
 public class RecommendedProduct
 {
-    // Variables declarations 
+    // Variables declarations
     private int _nProductId;
     private String _strProductName;
     private float _fScore;
-    
-    
-       /**
-        * Returns the ProductId
-        * @return The ProductId
-        */ 
-    public int getProductId()
+
+    /**
+     * Returns the ProductId
+     * 
+     * @return The ProductId
+     */
+    public int getProductId( )
     {
         return _nProductId;
     }
-    
-       /**
-        * Sets the ProductId
-        * @param nProductId The ProductId
-        */ 
+
+    /**
+     * Sets the ProductId
+     * 
+     * @param nProductId
+     *            The ProductId
+     */
     public void setProductId( int nProductId )
     {
         _nProductId = nProductId;
     }
-    
-       /**
-        * Returns the ProductName
-        * @return The ProductName
-        */ 
-    public String getProductName()
+
+    /**
+     * Returns the ProductName
+     * 
+     * @return The ProductName
+     */
+    public String getProductName( )
     {
         return _strProductName;
     }
-    
-       /**
-        * Sets the ProductName
-        * @param strProductName The ProductName
-        */ 
+
+    /**
+     * Sets the ProductName
+     * 
+     * @param strProductName
+     *            The ProductName
+     */
     public void setProductName( String strProductName )
     {
         _strProductName = strProductName;
     }
-    
-       /**
-        * Returns the Score
-        * @return The Score
-        */ 
-    public float getScore()
+
+    /**
+     * Returns the Score
+     * 
+     * @return The Score
+     */
+    public float getScore( )
     {
         return _fScore;
     }
-    
-       /**
-        * Sets the Score
-        * @param Score The Score
-        */ 
+
+    /**
+     * Sets the Score
+     * 
+     * @param Score
+     *            The Score
+     */
     public void setScore( float Score )
     {
         _fScore = Score;
     }
 
     @Override
-    public String toString()
+    public String toString( )
     {
         return "(score " + _fScore + ") #" + _nProductId + " - " + _strProductName;
     }
 
- }
+}
