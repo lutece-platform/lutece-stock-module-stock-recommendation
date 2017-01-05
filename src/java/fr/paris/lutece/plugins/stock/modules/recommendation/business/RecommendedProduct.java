@@ -100,12 +100,12 @@ public class RecommendedProduct
     /**
      * Sets the Score
      * 
-     * @param Score
+     * @param fScore
      *            The Score
      */
-    public void setScore( float Score )
+    public void setScore( float fScore )
     {
-        _fScore = Score;
+        _fScore = fScore;
     }
 
     @Override

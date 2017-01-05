@@ -28,6 +28,13 @@
         </application>
     </applications>
     
+    <page-include-services> 
+        <page-include-service> 
+            <page-include-service-name>Recommendation Page Include</page-include-service-name> 
+            <page-include-service-class>fr.paris.lutece.plugins.stock.modules.recommendation.web.RecommendationPageInclude</page-include-service-class> 
+        </page-include-service>    
+    </page-include-services> 
+    
     <daemons>
         <daemon>
             <daemon-id>recommendationsBuilder</daemon-id>

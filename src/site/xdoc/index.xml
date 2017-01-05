@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <title>Stock Recommendation Module</title>
+    </properties>
+    <body>
+        <section name="Stock Recommendation Module">
+            <subsection name="Introduction">
+                <p>
+                    This module offers recommendations of purchase or reservation 
+                    to users of the Stock plugin. It uses machine leaning technologies
+                    provided by the <a href="http://mahout.apache.org/">Apache Mahout</a> library.
+                </p>
+                <p>
+                    The recommendation principle is based on buying similarities with other users. 
+                    The products offered are those that the user does not yet have while 
+                    they have been retained by users having made orders close.
+                </p>
+            </subsection>
+            <subsection name="The recommendation XPage">
+                <p>
+                    This module provides an XPage available at the following URL :
+                </p>
+                <div>
+                    <pre>
+jsp/site/Portal.jsp?page=recommendation
+                    </pre>
+                </div>
+            </subsection>
+            <subsection name="The Page Include">
+                <p>
+                    To use the Page Include provided, you only have to had
+                    the bookmark <code>${recommendations}</code> into your HTML template
+                    where the list of recommended products should appear for the 
+                    currently connected user. 
+                </p>
+            </subsection>
+        </section>
+    </body>
+</document>

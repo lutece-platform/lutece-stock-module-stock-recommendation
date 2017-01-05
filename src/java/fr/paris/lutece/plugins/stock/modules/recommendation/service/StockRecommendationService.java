@@ -99,36 +99,38 @@ public final class StockRecommendationService
      * 
      * @return The unique instance
      */
-    public static synchronized StockRecommendationService instance( )
+    public static StockRecommendationService instance( )
     {
         if ( _singleton == null )
         {
-            _singleton = new StockRecommendationService( );
-            String strIdMigratorFilePath = AppPropertiesService.getProperty( PROPERTY_ID_MIGRATOR_FILE_PATH );
-            File idMigratorFile = new File( AppPathService.getAbsolutePathFromRelativePath( strIdMigratorFilePath ) );
-            String strDataFilePath = AppPropertiesService.getProperty( PROPERTY_DATA_FILE_PATH );
-            File dataFile = new File( AppPathService.getAbsolutePathFromRelativePath( strDataFilePath ) );
-            try
-            {
-                _migrator = new FileIDMigrator( idMigratorFile );
+            synchronized( StockRecommendationService.class )
+            {    
+                _singleton = new StockRecommendationService( );
+                String strIdMigratorFilePath = AppPropertiesService.getProperty( PROPERTY_ID_MIGRATOR_FILE_PATH );
+                File idMigratorFile = new File( AppPathService.getAbsolutePathFromRelativePath( strIdMigratorFilePath ) );
+                String strDataFilePath = AppPropertiesService.getProperty( PROPERTY_DATA_FILE_PATH );
+                File dataFile = new File( AppPathService.getAbsolutePathFromRelativePath( strDataFilePath ) );
+                try
+                {
+                    _migrator = new FileIDMigrator( idMigratorFile );
 
-                _listAvailableProducts = buildAvailableProductsList( );
-                AppLogService.info( "stock-recommendation : " + _listAvailableProducts.size( ) + " products found that can be ordered." );
-                AppLogService.info( "stock-recommendation : creating data file with current purchases." );
-                _writer = new FilePurchaseDataWriter( dataFile );
-                extractPurchases( );
-                AppLogService.info( "stock-recommendation : initialize the recommender with data." );
-                _recommender = createRecommender( dataFile );
+                    _listAvailableProducts = buildAvailableProductsList( );
+                    AppLogService.info( "stock-recommendation : " + _listAvailableProducts.size( ) + " products found that can be ordered." );
+                    AppLogService.info( "stock-recommendation : creating data file with current purchases." );
+                    _writer = new FilePurchaseDataWriter( dataFile );
+                    extractPurchases( );
+                    AppLogService.info( "stock-recommendation : initialize the recommender with data." );
+                    _recommender = createRecommender( dataFile );
+                }
+                catch( FileNotFoundException ex )
+                {
+                    AppLogService.error( "stock-recommendation : Error creating file " + strIdMigratorFilePath + " " + ex.getMessage( ), ex );
+                }
+                catch( IOException ex )
+                {
+                    AppLogService.error( "stock-recommendation : Error creating file " + strIdMigratorFilePath + " " + ex.getMessage( ), ex );
+                }
             }
-            catch( FileNotFoundException ex )
-            {
-                AppLogService.error( "stock-recommendation : Error creating file " + strIdMigratorFilePath + " " + ex.getMessage( ), ex );
-            }
-            catch( IOException ex )
-            {
-                AppLogService.error( "stock-recommendation : Error creating file " + strIdMigratorFilePath + " " + ex.getMessage( ), ex );
-            }
-
         }
         return _singleton;
     }

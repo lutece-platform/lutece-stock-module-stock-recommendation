@@ -57,11 +57,12 @@ import org.apache.mahout.cf.taste.common.TasteException;
 @Controller( xpageName = "recommendation", pageTitleI18nKey = "module.stock.recommendation.xpage.recommendation.pageTitle", pagePathI18nKey = "module.stock.recommendation.xpage.recommendation.pagePathLabel" )
 public class RecommendationApp extends MVCApplication
 {
+    public static final String MARK_PRODUCTS_LIST = "products_list";
+    public static final String MARK_PRODUCT_LINK_URL = "product_link_url";
+    public static final String PROPERTY_LINK_URL = "stock-recommendation.product.linkUrl";
+    public static final String PRODUCT_LINK_URL = AppPropertiesService.getProperty( PROPERTY_LINK_URL );
+
     private static final String TEMPLATE_XPAGE = "/skin/plugins/stock/modules/recommendation/recommendation.html";
-    private static final String MARK_PRODUCTS_LIST = "products_list";
-    private static final String MARK_PRODUCT_LINK_URL = "product_link_url";
-    private static final String PROPERTY_LINK_URL = "stock-recommendation.product.linkUrl";
-    private static final String PRODUCT_LINK_URL = AppPropertiesService.getProperty( PROPERTY_LINK_URL );
     private static final String PROPERTY_TEST_USER = "stock-recommendation.testuser";
     private static final String VIEW_HOME = "home";
     private static final String PARAMETER_USERNAME = "username";
@@ -79,8 +80,36 @@ public class RecommendationApp extends MVCApplication
     public XPage viewHome( HttpServletRequest request ) throws UserNotSignedException
     {
 
+        String strUserName = getUsername( request );
+
+        List<RecommendedProduct> listProducts = null;
+        try
+        {
+            listProducts = StockRecommendationService.instance( ).getRecommendedProducts( strUserName );
+        }
+        catch( TasteException ex )
+        {
+            // User not found
+            addError( "User not found" );
+            AppLogService.info( "Recommendation error : " + ex.getMessage( ) );
+        }
+        Map<String, Object> model = getModel( );
+        model.put( MARK_PRODUCTS_LIST, listProducts );
+        model.put( MARK_PRODUCT_LINK_URL, PRODUCT_LINK_URL );
+        return getXPage( TEMPLATE_XPAGE, LocaleService.getDefault( ), model );
+    }
+    
+    /**
+     * Gets the user name
+     * @param request The HTTP request
+     * @return the user name
+     * @throws UserNotSignedException 
+     */
+    public static String getUsername( HttpServletRequest request ) throws UserNotSignedException
+    {
+        String strUserName;
         // ////////// Test features - begin
-        String strUserName = AppPropertiesService.getProperty( PROPERTY_TEST_USER );
+        strUserName = AppPropertiesService.getProperty( PROPERTY_TEST_USER );
 
         String strRequestUser = request.getParameter( PARAMETER_USERNAME );
         if ( strRequestUser != null )
@@ -98,21 +127,6 @@ public class RecommendationApp extends MVCApplication
             }
             strUserName = user.getName( );
         }
-
-        List<RecommendedProduct> listProducts = null;
-        try
-        {
-            listProducts = StockRecommendationService.instance( ).getRecommendedProducts( strUserName );
-        }
-        catch( TasteException ex )
-        {
-            // User not found
-            addError( "User not found" );
-            AppLogService.info( "Recommendation error : " + ex.getMessage( ) );
-        }
-        Map<String, Object> model = getModel( );
-        model.put( MARK_PRODUCTS_LIST, listProducts );
-        model.put( MARK_PRODUCT_LINK_URL, PRODUCT_LINK_URL );
-        return getXPage( TEMPLATE_XPAGE, LocaleService.getDefault( ), model );
+        return strUserName;        
     }
 }

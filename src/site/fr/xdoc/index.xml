@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <title>Module Stock Recommendation</title>
+    </properties>
+    <body>
+        <section name="Module Stock Recommendation">
+            <subsection name="Introduction">
+                <p>
+                    Ce module permet de faire des recommandations d'achat ou de réservation
+                    aux utilisateurs plugin stock. Il utilise les technologies d'apprentissage automatique
+                    (<em>machine learning</em>) proposées par librarie <a href="http://mahout.apache.org/">Apache Mahout</a>.
+                </p>
+                <p>
+                    Le principe de recommandation se base sur les similarités d'achat avec d'autres utilisateurs. 
+                    Les produits proposés sont ceux dont l'utilisateur ne dispose pas encore alors qu'ils ont été retenus
+                    par des utilisateurs ayant fait des commandes proches.
+                </p>
+            </subsection>
+            <subsection name="La XPage de recommandation">
+                <p>
+                    Le module propose une XPage disponible à l'adresse suivante :
+                </p>
+                <div>
+                    <pre>
+jsp/site/Portal.jsp?page=recommendation
+                    </pre>
+                </div>
+            </subsection>
+            <subsection name="Le Page Include">
+                <p>
+                    Pour utiliser une inclusion HTML, il suffit d'ajouter le
+                    signet <code>${recommendations}</code> dans le code du template HTML
+                    où doit apparaitre la liste des produits recommandés pour l'utilisateur
+                    connecté. 
+                </p>
+            </subsection>
+        </section>
+    </body>
+</document>
