@@ -43,7 +43,7 @@ public class RecommendedProduct
     // Variables declarations
     private int _nProductId;
     private String _strProductName;
-    private float _fScore;
+    private double _dScore;
 
     /**
      * Returns the ProductId
@@ -92,9 +92,9 @@ public class RecommendedProduct
      * 
      * @return The Score
      */
-    public float getScore( )
+    public double getScore( )
     {
-        return _fScore;
+        return _dScore;
     }
 
     /**
@@ -103,15 +103,15 @@ public class RecommendedProduct
      * @param fScore
      *            The Score
      */
-    public void setScore( float fScore )
+    public void setScore( double dScore )
     {
-        _fScore = fScore;
+        _dScore = dScore;
     }
 
     @Override
     public String toString( )
     {
-        return "(score " + _fScore + ") #" + _nProductId + " - " + _strProductName;
+        return "(score " + _dScore + ") #" + _nProductId + " - " + _strProductName;
     }
 
 }

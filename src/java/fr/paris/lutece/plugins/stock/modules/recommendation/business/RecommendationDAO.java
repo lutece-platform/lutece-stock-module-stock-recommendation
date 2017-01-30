@@ -64,10 +64,10 @@ public final class RecommendationDAO
     public void insert( Recommendation recommendation, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
-
+        
         daoUtil.setString( 1, recommendation.getUsername( ) );
         daoUtil.setInt( 2, recommendation.getIdProduct( ) );
-        daoUtil.setFloat( 3, recommendation.getScore( ) );
+        daoUtil.setDouble( 3, recommendation.getScore( ) );
 
         daoUtil.executeUpdate( );
         daoUtil.free( );
@@ -112,7 +112,7 @@ public final class RecommendationDAO
 
             recommendation.setUsername( daoUtil.getString( 1 ) );
             recommendation.setIdProduct( daoUtil.getInt( 2 ) );
-            recommendation.setScore( daoUtil.getFloat( 3 ) );
+            recommendation.setScore( daoUtil.getDouble( 3 ) );
 
             recommendationList.add( recommendation );
         }

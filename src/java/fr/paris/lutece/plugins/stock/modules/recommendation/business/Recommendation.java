@@ -41,7 +41,7 @@ public class Recommendation
     // Variables declarations
     private String _strUsername;
     private int _nIdProduct;
-    private float _fScore;
+    private double _dScore;
 
     /**
      * Returns the Username
@@ -90,9 +90,9 @@ public class Recommendation
      * 
      * @return The Score
      */
-    public float getScore( )
+    public double getScore( )
     {
-        return _fScore;
+        return _dScore;
     }
 
     /**
@@ -101,15 +101,15 @@ public class Recommendation
      * @param fScore
      *            The Score
      */
-    public void setScore( float fScore )
+    public void setScore( double fScore )
     {
-        _fScore = fScore;
+        _dScore = fScore;
     }
 
     @Override
     public String toString( )
     {
-        return "USER:" + _strUsername + "  ITEM:" + _nIdProduct + "  SCORE:" + _fScore;
+        return "USER:" + _strUsername + "  ITEM:" + _nIdProduct + "  SCORE:" + _dScore;
     }
 
 }
