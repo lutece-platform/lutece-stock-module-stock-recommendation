@@ -111,10 +111,13 @@ public class RecommendationApp extends MVCApplication
         // ////////// Test features - begin
         strUserName = AppPropertiesService.getProperty( PROPERTY_TEST_USER );
 
-        String strRequestUser = request.getParameter( PARAMETER_USERNAME );
-        if ( strRequestUser != null )
+        if ( request != null )
         {
-            strUserName = strRequestUser;
+            String strRequestUser = request.getParameter( PARAMETER_USERNAME );
+            if ( strRequestUser != null )
+            {
+                strUserName = strRequestUser;
+            }
         }
         // ////////// Test features - end
 
