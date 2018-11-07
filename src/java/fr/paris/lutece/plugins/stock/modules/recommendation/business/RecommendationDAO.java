@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2017, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,6 @@
  *
  * License 1.0
  */
-
 package fr.paris.lutece.plugins.stock.modules.recommendation.business;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
@@ -64,7 +63,7 @@ public final class RecommendationDAO
     public void insert( Recommendation recommendation, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
-        
+
         daoUtil.setString( 1, recommendation.getUsername( ) );
         daoUtil.setInt( 2, recommendation.getIdProduct( ) );
         daoUtil.setDouble( 3, recommendation.getScore( ) );
@@ -93,7 +92,8 @@ public final class RecommendationDAO
     /**
      * Load the data of all the recommendations and returns them as a List
      * 
-     * @param strUsername The username
+     * @param strUsername
+     *            The username
      * @param plugin
      *            The plugin
      * @return The List which contains the data of all the recommendations

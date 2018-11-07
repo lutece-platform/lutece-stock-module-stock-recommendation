@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2017, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,6 @@
  * License 1.0
  */
 
-
 package fr.paris.lutece.plugins.stock.modules.recommendation.web;
 
 import fr.paris.lutece.plugins.stock.modules.recommendation.business.RecommendedProduct;
@@ -56,6 +55,7 @@ public class RecommendationPageInclude implements PageInclude
 {
     private static final String TEMPLATE_PAGE_INCLUDE = "/skin/plugins/stock/modules/recommendation/page_include.html";
     private static final String MARK_RECOMMENDATIONS = "recommendations";
+
     /**
      * {@inheritDoc }
      */
@@ -68,11 +68,11 @@ public class RecommendationPageInclude implements PageInclude
         {
             String strUserName = RecommendationApp.getUsername( request );
             listProducts = StockRecommendationService.instance( ).getRecommendedProducts( strUserName );
-            Map<String, Object> model = new HashMap<>();
+            Map<String, Object> model = new HashMap<>( );
             model.put( RecommendationApp.MARK_PRODUCTS_LIST, listProducts );
             model.put( RecommendationApp.MARK_PRODUCT_LINK_URL, RecommendationApp.PRODUCT_LINK_URL );
-            HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_PAGE_INCLUDE, LocaleService.getDefault(), model );
-            strContent = template.getHtml();
+            HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_PAGE_INCLUDE, LocaleService.getDefault( ), model );
+            strContent = template.getHtml( );
         }
         catch( TasteException ex )
         {
@@ -84,7 +84,7 @@ public class RecommendationPageInclude implements PageInclude
             // User not signed
             strContent = "User not signed";
         }
-        
+
         rootModel.put( MARK_RECOMMENDATIONS, strContent );
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2017, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,6 @@
  *
  * License 1.0
  */
-
 package fr.paris.lutece.plugins.stock.modules.recommendation.service;
 
 import fr.paris.lutece.portal.service.util.AppLogService;
@@ -51,7 +50,9 @@ public class FilePurchaseDataWriter implements PurchaseDataWriter
 
     /**
      * Constructor
-     * @param file The data file 
+     * 
+     * @param file
+     *            The data file
      */
     public FilePurchaseDataWriter( File file )
     {

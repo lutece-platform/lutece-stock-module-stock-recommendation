@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2017, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,6 @@
  *
  * License 1.0
  */
-
 package fr.paris.lutece.plugins.stock.modules.recommendation.service;
 
 import fr.paris.lutece.plugins.stock.modules.recommendation.business.AvailableProductsDAO;
@@ -104,7 +103,7 @@ public final class StockRecommendationService
         if ( _singleton == null )
         {
             synchronized( StockRecommendationService.class )
-            {    
+            {
                 _singleton = new StockRecommendationService( );
                 String strIdMigratorFilePath = AppPropertiesService.getProperty( PROPERTY_ID_MIGRATOR_FILE_PATH );
                 File idMigratorFile = new File( AppPathService.getAbsolutePathFromRelativePath( strIdMigratorFilePath ) );
@@ -202,10 +201,14 @@ public final class StockRecommendationService
 
     /**
      * Get the recommended products list
-     * @param strUserName The username
+     * 
+     * @param strUserName
+     *            The username
      * @return The list
-     * @throws NoSuchUserException if the user is not found
-     * @throws TasteException if an error occurs
+     * @throws NoSuchUserException
+     *             if the user is not found
+     * @throws TasteException
+     *             if an error occurs
      */
     private List<RecommendedProduct> getRecommendedProductsList( String strUserName ) throws NoSuchUserException, TasteException
     {
@@ -316,10 +319,9 @@ public final class StockRecommendationService
         }
 
         double ratio = (double) nRecommendationCount / (double) nUsersCount;
-        sbLogs.append( "Recommendation builder\n " )
-                .append( "number of users : " ).append( nUsersCount ).append( '\n' )
-                .append( "number of recommendations : " ).append( nRecommendationCount ).append( '\n' )
-                .append( "ratio per user : " ).append( ratio ).append( '\n' );
+        sbLogs.append( "Recommendation builder\n " ).append( "number of users : " ).append( nUsersCount ).append( '\n' )
+                .append( "number of recommendations : " ).append( nRecommendationCount ).append( '\n' ).append( "ratio per user : " ).append( ratio )
+                .append( '\n' );
     }
 
     /**
@@ -327,7 +329,7 @@ public final class StockRecommendationService
      * 
      * @param strUsername
      *            The Username
-     * @param listProduct 
+     * @param listProduct
      *            The product list
      * @return The number of recommendations found
      */

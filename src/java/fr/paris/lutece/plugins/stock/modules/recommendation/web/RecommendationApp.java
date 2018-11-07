@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2017, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -98,12 +98,14 @@ public class RecommendationApp extends MVCApplication
         model.put( MARK_PRODUCT_LINK_URL, PRODUCT_LINK_URL );
         return getXPage( TEMPLATE_XPAGE, LocaleService.getDefault( ), model );
     }
-    
+
     /**
      * Gets the user name
-     * @param request The HTTP request
+     * 
+     * @param request
+     *            The HTTP request
      * @return the user name
-     * @throws UserNotSignedException 
+     * @throws UserNotSignedException
      */
     public static String getUsername( HttpServletRequest request ) throws UserNotSignedException
     {
@@ -130,6 +132,6 @@ public class RecommendationApp extends MVCApplication
             }
             strUserName = user.getName( );
         }
-        return strUserName;        
+        return strUserName;
     }
 }

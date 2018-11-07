@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2017, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,8 +53,11 @@ public class AvailableProductsDAO
 
     /**
      * Get the list of available products IDs at a given time
-     * @param time The time
-     * @param plugin The plugin
+     * 
+     * @param time
+     *            The time
+     * @param plugin
+     *            The plugin
      * @return The list
      */
     public List<Integer> selectAvailableProductsIdList( Timestamp time, Plugin plugin )
@@ -77,8 +80,11 @@ public class AvailableProductsDAO
 
     /**
      * Gets product infos
-     * @param product The product
-     * @param plugin The plugin
+     * 
+     * @param product
+     *            The product
+     * @param plugin
+     *            The plugin
      */
     public void getProductInfos( RecommendedProduct product, Plugin plugin )
     {
