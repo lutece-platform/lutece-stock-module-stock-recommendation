@@ -100,15 +100,17 @@ public final class StockRecommendationService
      */
     public static StockRecommendationService instance( )
     {
-        if ( _singleton == null )
+        String strDataFilePath = AppPropertiesService.getProperty( PROPERTY_DATA_FILE_PATH );
+        File dataFile = new File( AppPathService.getAbsolutePathFromRelativePath( strDataFilePath ) );
+        Long dataFileLength = dataFile.length();
+        if ( _singleton == null || dataFileLength <= 0L )
         {
             synchronized( StockRecommendationService.class )
             {
                 _singleton = new StockRecommendationService( );
                 String strIdMigratorFilePath = AppPropertiesService.getProperty( PROPERTY_ID_MIGRATOR_FILE_PATH );
                 File idMigratorFile = new File( AppPathService.getAbsolutePathFromRelativePath( strIdMigratorFilePath ) );
-                String strDataFilePath = AppPropertiesService.getProperty( PROPERTY_DATA_FILE_PATH );
-                File dataFile = new File( AppPathService.getAbsolutePathFromRelativePath( strDataFilePath ) );
+
                 try
                 {
                     _migrator = new FileIDMigrator( idMigratorFile );
@@ -119,7 +121,9 @@ public final class StockRecommendationService
                     _writer = new FilePurchaseDataWriter( dataFile );
                     extractPurchases( );
                     AppLogService.info( "stock-recommendation : initialize the recommender with data." );
-                    _recommender = createRecommender( dataFile );
+                    if( dataFileLength > 0L ) {
+                        _recommender = createRecommender(dataFile);
+                    }
                 }
                 catch( FileNotFoundException ex )
                 {
@@ -165,7 +169,11 @@ public final class StockRecommendationService
     public List<RecommendedItem> getRecommendedItems( String strUserName ) throws NoSuchUserException, TasteException
     {
         long lUserId = _migrator.toLongID( strUserName );
-        return _recommender.recommend( lUserId, _nCount );
+        List<RecommendedItem> recommendedItems = new ArrayList<>();
+        if(_recommender != null ) {
+            recommendedItems = _recommender.recommend( lUserId, _nCount );
+        }
+        return recommendedItems;
     }
 
     /**
