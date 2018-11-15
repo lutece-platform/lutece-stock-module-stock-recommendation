@@ -102,8 +102,7 @@ public final class StockRecommendationService
     {
         String strDataFilePath = AppPropertiesService.getProperty( PROPERTY_DATA_FILE_PATH );
         File dataFile = new File( AppPathService.getAbsolutePathFromRelativePath( strDataFilePath ) );
-        Long dataFileLength = dataFile.length();
-        if ( _singleton == null || dataFileLength <= 0L )
+        if ( _singleton == null || dataFile.length() <= 0L )
         {
             synchronized( StockRecommendationService.class )
             {
@@ -121,7 +120,7 @@ public final class StockRecommendationService
                     _writer = new FilePurchaseDataWriter( dataFile );
                     extractPurchases( );
                     AppLogService.info( "stock-recommendation : initialize the recommender with data." );
-                    if( dataFileLength > 0L ) {
+                    if( dataFile.length() > 0L ) {
                         _recommender = createRecommender(dataFile);
                     }
                 }
